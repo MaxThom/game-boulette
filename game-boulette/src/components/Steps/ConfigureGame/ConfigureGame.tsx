@@ -1,7 +1,6 @@
 import React, { Component, ReactNode } from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import Grid from "@material-ui/core/Grid";
@@ -50,38 +49,22 @@ const ConfigureGame: React.FC = () => {
         </Grid>
         <Grid item xs={2} className={classes.item}>
           <TextField
-            id="outlined-select-currency"
-            select
             label="Nombre de manche"
-            value="3"
+            id=""
+            defaultValue="3"
             helperText=""
             variant="outlined"
             size="small"
+            type="number"
             fullWidth
-          >
-            <MenuItem key="1" value="1">
-              1 manche
-            </MenuItem>
-            <MenuItem key="2" value="2">
-              2 manches
-            </MenuItem>
-            <MenuItem key="3" value="3">
-              3 manches
-            </MenuItem>
-            <MenuItem key="4" value="4">
-              4 manches
-            </MenuItem>
-            <MenuItem key="5" value="5">
-              5 manches
-            </MenuItem>
-          </TextField>
+          />
         </Grid>
         <Grid item xs={6} />
         {/* 12 */}
         <Grid item xs={2} />
-        <Grid item xs={2}>
+        <Grid item xs={2} className={classes.item}>
           <Typography id="discrete-slider" gutterBottom>
-            Temps par manche (seconde)
+            Temps par personne (seconde)
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -101,16 +84,47 @@ const ConfigureGame: React.FC = () => {
         </Grid>
         <Grid item xs={2} />
         {/* 12 */}
+        <Grid item xs={2} />
+        <Grid item xs={2} className={classes.item}>
+          <Typography id="" gutterBottom>
+            Nombre de papier par personne
+          </Typography>
+        </Grid>
+        <Grid item xs={2} className={classes.item}>
+          <TextField
+            label="Papier par personne"
+            id="outlined-margin-none"
+            defaultValue="5"
+            helperText=""
+            variant="outlined"
+            size="small"
+            type="number"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} />
+        {/* 12 */}
+        <Grid item xs={2} />
+        <Grid item xs={2} className={classes.item}>
+          <Typography id="" gutterBottom>
+            Thème de la partie
+          </Typography>
+        </Grid>
+        <Grid item xs={2} className={classes.item}>
+          <TextField
+            label="Thème"
+            id="outlined-margin-none"
+            defaultValue="Tout"
+            helperText=""
+            variant="outlined"
+            size="small"
+            type="string"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} />
       </Grid>
-
-      <TextField
-        label="Nombre de manche"
-        id="outlined-margin-none"
-        defaultValue="3"
-        helperText=""
-        variant="outlined"
-        size="small"
-      />
+      {/* 12 */}
     </form>
   );
 };

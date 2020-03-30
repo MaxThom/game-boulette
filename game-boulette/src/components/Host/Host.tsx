@@ -86,7 +86,7 @@ const StepIconStyles = makeStyles({
 });
 
 function getSteps() {
-  return ["Configurer la partie", "Choisir votre nom", "Salle d'attente"];
+  return ["Configurer la partie", "Choisir votre nom", "Sélection des équipes"];
 }
 
 function StepIcon(props: StepIconProps) {
