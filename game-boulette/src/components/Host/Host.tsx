@@ -161,9 +161,9 @@ const Host: React.FC = () => {
           {activeStep === steps.length ? (
             <div>
               <Typography className={classes.instructions}>
-                All steps completed
+                Terminé !
               </Typography>
-              <Button onClick={handleReset}>Reset</Button>
+              <Button onClick={handleReset}>Recommencer</Button>
             </div>
           ) : (
             <div>
@@ -178,14 +178,14 @@ const Host: React.FC = () => {
                   onClick={handleBack}
                   className={classes.backButton}
                 >
-                  Back
+                  Retour
                 </Button>
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={handleNext}
                 >
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                  {activeStep === steps.length - 1 ? "Lancer la partie !" : "Suivant"}
                 </Button>
               </div>
             </div>
