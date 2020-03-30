@@ -123,8 +123,28 @@ const ConfigureGame: React.FC = () => {
           />
         </Grid>
         <Grid item xs={6} />
-      </Grid>
-      {/* 12 */}
+        {/* 12 */}
+        <Grid item xs={2} />
+        <Grid item xs={2} className={classes.item}>
+          <Typography id="" gutterBottom>
+            Zoom URL
+          </Typography>
+        </Grid>
+        <Grid item xs={2} className={classes.item}>
+          <TextField
+            label="URL"
+            id="outlined-margin-none"
+            defaultValue=""
+            helperText=""
+            variant="outlined"
+            size="small"
+            type="string"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} />
+      </Grid>      
+      
     </form>
   );
 };
