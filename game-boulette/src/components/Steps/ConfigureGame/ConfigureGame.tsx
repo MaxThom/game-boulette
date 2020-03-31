@@ -14,7 +14,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ConfigureGame: React.FC = () => {
+type ConfigureGameProps = {
+  OnFormInputChanges: (event: any) => void;
+}
+
+const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState<number>(60);
 
@@ -51,6 +55,7 @@ const ConfigureGame: React.FC = () => {
           <TextField
             label="Nombre de manche"
             id=""
+            onChange={OnFormInputChanges}
             defaultValue="3"
             helperText=""
             variant="outlined"

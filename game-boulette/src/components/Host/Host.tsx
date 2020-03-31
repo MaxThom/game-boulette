@@ -23,6 +23,8 @@ import ConfigureGame from "../Steps/ConfigureGame/ConfigureGame";
 import SelectName from "../Steps/SelectName/SelectName";
 import WaitingRoom from "../Steps/WaitingRoom/WaitingRoom";
 
+import { createGameConfig } from '../../services/firebaseStore';
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -114,7 +116,7 @@ function StepIcon(props: StepIconProps) {
 function getStepContent(stepIndex: number) {
   switch (stepIndex) {
     case 0:
-      return <ConfigureGame />;
+      return <ConfigureGame OnFormInputChanges={OnFormInputChanges}/>;
     case 1:
       return <SelectName />;
     case 2:
@@ -124,13 +126,22 @@ function getStepContent(stepIndex: number) {
   }
 }
 
+function OnFormInputChanges(event: any) {
+  console.log("TEST");
+}
+
 const Host: React.FC = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
   const steps = getSteps();
 
+  
   const handleNext = () => {
+    if (activeStep === 0) {
+      //createGameConfig();
+    }
+
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 

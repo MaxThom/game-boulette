@@ -1,5 +1,26 @@
 import { firebaseStore } from '../config/firebase';
 
+export async function createGameConfig(Theme: string, ZoomUrl: string, NbOfRound: number, NbOFPaperPerPerson: string, TimePerPersonSec: number): Promise<boolean> {
+    var success = false;
+    await firebaseStore.collection("games").add({
+        Status: "Waiting-Room",
+        Config: {
+            Theme: Theme,
+            ZoomUrl: ZoomUrl,
+            NbOfRound: NbOfRound,
+            NbOFPaperPerPerson: NbOFPaperPerPerson,
+            TimePerPersonSec: TimePerPersonSec
+        }
+    })
+    .then(() => {
+        success = true;
+    })
+    .catch(() => {
+        success = false;
+    });
+    return success;
+}
+
 export async function requestNewSignUp(email: string, firstName: string, lastName: string): Promise<boolean> {
     var success = false;
     await firebaseStore.collection("usersPortal").add({
