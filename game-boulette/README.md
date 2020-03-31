@@ -4,6 +4,15 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `firebase login`
+Sign in
+
+### `firebase init`
+Init the project
+
+### `firebase deploy`
+Deploy to firebase hosting
+
 ### `npm start`
 
 Runs the app in the development mode.<br />

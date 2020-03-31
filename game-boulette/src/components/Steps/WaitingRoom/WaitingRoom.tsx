@@ -10,6 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import GroupIcon from "@material-ui/icons/Group";
 import VideoLabelIcon from "@material-ui/icons/VideoLabel";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,6 +24,12 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: "15%",
       maxWidth: 300,
       backgroundColor: theme.palette.background.paper
+    },
+    teamSelectorLeft: {
+      marginLeft: "50%"
+    },
+    teamSelectorRight: {
+      marginLeft: "40%"
     }
   })
 );
@@ -31,10 +38,19 @@ const WaitingRoom: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      <hr/>  
-      <Grid container direction="row" justify="space-evenly" alignItems="center">
+      <hr />
+      <Grid
+        container
+        direction="row"
+        justify="space-evenly"
+        alignItems="center"
+      >
         <Grid item xs>
-          <List className={classes.list} component="nav" aria-label="main mailbox folders">
+          <List
+            className={classes.list}
+            component="nav"
+            aria-label="main mailbox folders"
+          >
             <ListItem button>
               <ListItemIcon>
                 <GroupIcon />
@@ -50,13 +66,22 @@ const WaitingRoom: React.FC = () => {
             </ListItem>
           </List>
         </Grid>
+        <Grid item xs={1}>
+          <Button className={classes.teamSelectorLeft} variant="outlined" color="secondary">
+            &#60;&#60;&#60;
+          </Button>
+        </Grid>
         <Grid item xs>
-          <List className={classes.list} component="nav" aria-label="main mailbox folders">
+          <List
+            className={classes.list}
+            component="nav"
+            aria-label="main mailbox folders"
+          >
             <ListItem button>
               <ListItemIcon>
                 <VideoLabelIcon />
               </ListItemIcon>
-              <ListItemText primary="Attente" />
+              <ListItemText primary="Choisir votre équipe" />
             </ListItem>
             <Divider />
             <ListItem button>
@@ -67,8 +92,17 @@ const WaitingRoom: React.FC = () => {
             </ListItem>
           </List>
         </Grid>
+        <Grid item xs={1}>
+          <Button className={classes.teamSelectorRight} variant="outlined" color="secondary">
+            &#62;&#62;&#62;
+          </Button>
+        </Grid>
         <Grid item xs>
-          <List className={classes.list} component="nav" aria-label="main mailbox folders">
+          <List
+            className={classes.list}
+            component="nav"
+            aria-label="main mailbox folders"
+          >
             <ListItem button>
               <ListItemIcon>
                 <GroupIcon />
