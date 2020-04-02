@@ -1,8 +1,12 @@
-import React, { Component, ReactNode } from 'react';
+import React from 'react';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+
+import { setPlayerName } from "../../../services/firebaseStore";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -10,12 +14,23 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {},
     item: {
       textAlign: "left"
+    },
+    fill: {
+      width: "100%"
     }
   })
 );
 
 const SelectName: React.FC = () => {
   const classes = useStyles();
+  const [name, setName] = React.useState<string>("");
+  const [disable, setDisable] = React.useState<boolean>(false);
+
+  const OnSave = async (): Promise<void> => {
+    setDisable(true);
+    var isSuccess = await setPlayerName(name);
+    setDisable(false);
+  };
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
@@ -31,14 +46,14 @@ const SelectName: React.FC = () => {
     >
       <Grid item xs={2} />
       <Grid item xs={10} className={classes.item}>
-        <Typography variant="h5" component="h1">
+        <Typography component={'span'} variant="h5" >
           Entrez de votre nom
         </Typography>
       </Grid>
       {/* 12 */}
       <Grid item xs={2} />
       <Grid item xs={2} className={classes.item}>
-        <Typography id="" gutterBottom>
+        <Typography component={'span'} id="" gutterBottom>
           Votre nom
         </Typography>
       </Grid>
@@ -46,7 +61,10 @@ const SelectName: React.FC = () => {
         <TextField
           label="Nom"
           id=""
-          defaultValue=""
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setName(e.currentTarget.value)
+          }
+          defaultValue={name}
           helperText=""
           variant="outlined"
           size="small"
@@ -55,6 +73,20 @@ const SelectName: React.FC = () => {
         />
       </Grid>
       <Grid item xs={6} />
+      {/* 12 */}
+      <Grid item xs={2} />
+        <Grid item xs={8} className={classes.item}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => OnSave()}
+            className={classes.fill}
+            startIcon={<SaveIcon />}
+          >
+            Sauvegarder
+          </Button>
+        </Grid>
+        <Grid item xs={2} />
       </Grid>
   </form>
   );

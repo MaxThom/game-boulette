@@ -1,35 +1,44 @@
-import React, { Component, ReactNode } from "react";
+import React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+
+import { createGameConfig } from "../../../services/firebaseStore";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
     item: {
       textAlign: "left"
+    },
+    fill: {
+      width: "100%"
     }
   })
 );
 
-type ConfigureGameProps = {
-  OnFormInputChanges: (event: any) => void;
-}
-
-const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => {
+const ConfigureGame: React.FC = () => {
   const classes = useStyles();
-  const [value, setValue] = React.useState<number>(60);
+  const [nbRound, setNbRound] = React.useState<number>(3);
+  const [slider, setSlider] = React.useState<number>(60);
+  const [nbPaper, setNbPaper] = React.useState<number>(5);
+  const [theme, setTheme] = React.useState<string>("Tout");
+  const [zoom, setZoom] = React.useState<string>("");
+  const [disable, setDisable] = React.useState<boolean>(false);
 
-  const handleChange = (event: any, newValue: number | number[]) => {
-    setValue(newValue as number);
+  const OnSaveGame = async (): Promise<void> => {
+    setDisable(true);
+    var isSuccess = await createGameConfig(theme, zoom, nbRound, nbPaper, slider);
+    setDisable(false);
   };
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <hr />
-
       <br />
       <Grid
         container
@@ -40,14 +49,14 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
       >
         <Grid item xs={2} />
         <Grid item xs={10} className={classes.item}>
-          <Typography variant="h5" component="h1">
+          <Typography component={'span'} variant="h5" >
             Configuration de la partie
           </Typography>
         </Grid>
         {/* 12 */}
         <Grid item xs={2} />
         <Grid item xs={2} className={classes.item}>
-          <Typography id="" gutterBottom>
+          <Typography component={'span'} id="" gutterBottom>
             Nombre de manche
           </Typography>
         </Grid>
@@ -55,8 +64,10 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
           <TextField
             label="Nombre de manche"
             id=""
-            onChange={OnFormInputChanges}
-            defaultValue="3"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNbRound(+e.currentTarget.value)
+            }
+            defaultValue={nbRound}
             helperText=""
             variant="outlined"
             size="small"
@@ -68,14 +79,16 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
         {/* 12 */}
         <Grid item xs={2} />
         <Grid item xs={2} className={classes.item}>
-          <Typography id="discrete-slider" gutterBottom>
+          <Typography component={'span'} id="discrete-slider" gutterBottom>
             Temps par personne (seconde)
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Slider
-            defaultValue={value}
-            onChange={handleChange}
+            defaultValue={slider}
+            onChange={(event: any, value: number | number[]) =>
+              setSlider(value as number)
+            }
             aria-labelledby="discrete-slider"
             valueLabelDisplay="auto"
             step={10}
@@ -85,13 +98,13 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
           />
         </Grid>
         <Grid item xs={2} className={classes.item}>
-          {value} secondes
+          {slider} secondes
         </Grid>
         <Grid item xs={2} />
         {/* 12 */}
         <Grid item xs={2} />
         <Grid item xs={2} className={classes.item}>
-          <Typography id="" gutterBottom>
+          <Typography component={'span'} id="" gutterBottom>
             Nombre de papier par personne
           </Typography>
         </Grid>
@@ -99,7 +112,10 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
           <TextField
             label="Papier par personne"
             id="outlined-margin-none"
-            defaultValue="5"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNbPaper(+e.currentTarget.value)
+            }
+            defaultValue={nbPaper}
             helperText=""
             variant="outlined"
             size="small"
@@ -111,7 +127,7 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
         {/* 12 */}
         <Grid item xs={2} />
         <Grid item xs={2} className={classes.item}>
-          <Typography id="" gutterBottom>
+          <Typography component={'span'} id="" gutterBottom>
             Thème de la partie
           </Typography>
         </Grid>
@@ -119,7 +135,10 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
           <TextField
             label="Thème"
             id="outlined-margin-none"
-            defaultValue="Tout"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTheme(e.currentTarget.value)
+            }
+            defaultValue={theme}
             helperText=""
             variant="outlined"
             size="small"
@@ -131,7 +150,7 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
         {/* 12 */}
         <Grid item xs={2} />
         <Grid item xs={2} className={classes.item}>
-          <Typography id="" gutterBottom>
+          <Typography component={'span'} id="" gutterBottom>
             Zoom URL
           </Typography>
         </Grid>
@@ -139,7 +158,10 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
           <TextField
             label="URL"
             id="outlined-margin-none"
-            defaultValue=""
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setZoom(e.currentTarget.value)
+            }
+            defaultValue={zoom}
             helperText=""
             variant="outlined"
             size="small"
@@ -148,8 +170,22 @@ const ConfigureGame: React.FC<ConfigureGameProps> = ({ OnFormInputChanges }) => 
           />
         </Grid>
         <Grid item xs={6} />
-      </Grid>      
-      
+        {/* 12 */}
+        <Grid item xs={2} />
+        <Grid item xs={8} className={classes.item}>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.fill}
+            startIcon={<SaveIcon />}
+            onClick={() => OnSaveGame()}
+            disabled={disable}
+          >
+            Sauvegarder
+          </Button>
+        </Grid>
+        <Grid item xs={2} />
+      </Grid>
     </form>
   );
 };

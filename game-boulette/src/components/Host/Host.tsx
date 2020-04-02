@@ -116,7 +116,7 @@ function StepIcon(props: StepIconProps) {
 function getStepContent(stepIndex: number) {
   switch (stepIndex) {
     case 0:
-      return <ConfigureGame OnFormInputChanges={OnFormInputChanges}/>;
+      return <ConfigureGame/>;
     case 1:
       return <SelectName />;
     case 2:
@@ -124,10 +124,6 @@ function getStepContent(stepIndex: number) {
     default:
       return "Unknown stepIndex";
   }
-}
-
-function OnFormInputChanges(event: any) {
-  console.log("TEST");
 }
 
 const Host: React.FC = () => {
@@ -171,14 +167,14 @@ const Host: React.FC = () => {
         <div>
           {activeStep === steps.length ? (
             <div>
-              <Typography className={classes.instructions}>
+              <Typography component={'span'} className={classes.instructions}>
                 Terminé !
               </Typography>
               <Button onClick={handleReset}>Recommencer</Button>
             </div>
           ) : (
             <div>
-              <Typography className={classes.instructions}>
+              <Typography component={'span'} className={classes.instructions}>
                 <br />
                 {getStepContent(activeStep)}
                 <br />

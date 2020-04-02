@@ -23,7 +23,7 @@ const Title: React.FC<TitleProps> = ({title}) => {
         spacing={0}
       >
         <Grid item xs={12}>
-          <Typography variant="h2" component="h1">
+          <Typography component={'span'} variant="h2" >
             {title}
           </Typography>
         </Grid>

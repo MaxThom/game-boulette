@@ -49,10 +49,10 @@ const MainMenu: React.FC = () => {
                 title="Rejoindre une partie"
               />
               <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
+                <Typography component={'span'} gutterBottom variant="h5">
                   Rejoindre
                 </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
+                <Typography component={'span'} variant="body2" color="textSecondary">
                   Rejoindre une partie de boulette
                 </Typography>
               </CardContent>
@@ -71,10 +71,10 @@ const MainMenu: React.FC = () => {
                 title="Hôte d'une partie"
               />
               <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
+                <Typography component={'span'} gutterBottom variant="h5">
                   Organiser
                 </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
+                <Typography component={'span'} variant="body2" color="textSecondary">
                   Organiser une partie de boulette
                 </Typography>
               </CardContent>
