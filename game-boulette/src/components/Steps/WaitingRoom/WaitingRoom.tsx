@@ -69,9 +69,20 @@ const WaitingRoom: React.FC = () => {
 
   const onGameUpdates = (data: DocumentData): void => {
       console.log(data);
-      setNames(data["WaitingRoom"] as string[]);
-      setTeam1(data["Team1"] as string[]);
-      setTeam2(data["Team2"] as string[]);
+      if (data["WaitingRoom"] === undefined) 
+        setNames([]);
+      else
+        setNames(data["WaitingRoom"] as string[]);
+
+      if (data["Team1"] === undefined) 
+        setNames([]);
+      else
+        setNames(data["Team1"] as string[]);
+
+      if (data["Team2"] === undefined) 
+        setNames([]);
+      else
+        setNames(data["Team2"] as string[]);
   }
 
   return (
