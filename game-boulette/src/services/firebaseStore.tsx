@@ -9,6 +9,7 @@ import * as firebase from "firebase/app";
 
 var gameRefPath: string | null = localStorage.getItem("BOULETTE_GameRef");
 var playerName: string | null = localStorage.getItem("BOULETTE_PlayerName");
+checkIfGameIsPresent();
 
 console.log(gameRefPath);
 console.log(playerName);
@@ -16,6 +17,33 @@ console.log(playerName);
 export function getPlayerName(): string {
   return playerName as string;
 }
+
+export async function checkIfGameIsPresent(): Promise<void> {
+   
+    await firebaseStore
+    .collection("games")
+    .doc((gameRefPath as string).split("/")[1])
+    .get()
+    .then((document: DocumentSnapshot<DocumentData>) => {
+    
+        var game = document.data() as DocumentData;
+        if (game["Status"] === "Game-Complete")
+        {
+            gameRefPath = null;
+            playerName = null;
+            localStorage.removeItem("BOULETTE_GameRef");
+            localStorage.removeItem("BOULETTE_PlayerName");
+        } else 
+            console.log("OnGoingGameDetected");      
+    })
+    .catch(() => {
+        gameRefPath = null;
+        playerName = null;
+        localStorage.removeItem("BOULETTE_GameRef");
+        localStorage.removeItem("BOULETTE_PlayerName");
+    }); 
+    
+  }
 
 export async function createGameConfig(
   Theme: string,
