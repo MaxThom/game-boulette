@@ -46,6 +46,7 @@ export async function checkIfGameIsPresent(): Promise<void> {
   }
 
 export async function createGameConfig(
+  GameName: string,
   Theme: string,
   ZoomUrl: string,
   NbOfRound: number,
@@ -63,6 +64,7 @@ export async function createGameConfig(
       .update({
         Status: "Waiting-Room",
         Config: {
+          GameName: GameName,
           Theme: Theme,
           ZoomUrl: ZoomUrl,
           NbOfRound: NbOfRound,

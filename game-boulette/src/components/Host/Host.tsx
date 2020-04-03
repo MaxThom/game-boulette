@@ -141,10 +141,6 @@ const Host: React.FC = () => {
 
   
   const handleNext = () => {
-    if (activeStep === 0) {
-      //createGameConfig();
-    }
-
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 

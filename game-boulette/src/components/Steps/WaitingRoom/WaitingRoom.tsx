@@ -68,7 +68,6 @@ const WaitingRoom: React.FC = () => {
   };
 
   const onGameUpdates = (data: DocumentData): void => {
-      console.log("TEST");
       console.log(data);
       if (data["WaitingRoom"] === undefined) 
         setNames([]);

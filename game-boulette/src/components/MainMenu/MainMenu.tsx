@@ -52,7 +52,7 @@ const MainMenu: React.FC = () => {
                 <Typography component={'span'} gutterBottom variant="h5">
                   Rejoindre
                 </Typography>
-                <Typography component={'span'} variant="body2" color="textSecondary">
+                <Typography variant="body2" color="textSecondary">
                   Rejoindre une partie de boulette
                 </Typography>
               </CardContent>
@@ -74,7 +74,7 @@ const MainMenu: React.FC = () => {
                 <Typography component={'span'} gutterBottom variant="h5">
                   Organiser
                 </Typography>
-                <Typography component={'span'} variant="body2" color="textSecondary">
+                <Typography variant="body2" color="textSecondary">
                   Organiser une partie de boulette
                 </Typography>
               </CardContent>

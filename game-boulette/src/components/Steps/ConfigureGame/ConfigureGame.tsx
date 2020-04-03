@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ConfigureGame: React.FC = () => {
   const classes = useStyles();
+  const [gameName, setGameName] = React.useState<string>("");
   const [nbRound, setNbRound] = React.useState<number>(3);
   const [slider, setSlider] = React.useState<number>(60);
   const [nbPaper, setNbPaper] = React.useState<number>(5);
@@ -32,7 +33,7 @@ const ConfigureGame: React.FC = () => {
 
   const OnSaveGame = async (): Promise<void> => {
     setDisable(true);
-    var isSuccess = await createGameConfig(theme, zoom, nbRound, nbPaper, slider);
+    var isSuccess = await createGameConfig(gameName, theme, zoom, nbRound, nbPaper, slider);
     setDisable(false);
   };
 
@@ -53,6 +54,28 @@ const ConfigureGame: React.FC = () => {
             Configuration de la partie
           </Typography>
         </Grid>
+        {/* 12 */}
+        <Grid item xs={2} />
+        <Grid item xs={2} className={classes.item}>
+          <Typography component={'span'} id="" gutterBottom>
+            Nom de la partie
+          </Typography>
+        </Grid>
+        <Grid item xs={2} className={classes.item}>
+          <TextField
+            label="Nom"
+            id=""
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setGameName(e.currentTarget.value)
+            }
+            defaultValue={gameName}
+            helperText=""
+            variant="outlined"
+            size="small"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} />
         {/* 12 */}
         <Grid item xs={2} />
         <Grid item xs={2} className={classes.item}>
