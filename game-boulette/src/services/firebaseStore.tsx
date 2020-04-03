@@ -286,7 +286,6 @@ export async function setPlayerInTeam(team: number): Promise<boolean> {
   return success;
 }
 
-
 export async function getGameUpdates(onGameUpdates: (data: DocumentData) => void): Promise<string[]> {
     var data: string[] = [];
   
@@ -301,4 +300,43 @@ export async function getGameUpdates(onGameUpdates: (data: DocumentData) => void
     return data;
   }
 
+export async function setPlayerWords(words: string[]): Promise<boolean> {
+    var success = false;
+    words.forEach( async (element) => {
+        if (element) {
+            if (element.trim()) {
+                await firebaseStore
+                .collection("games")
+                .doc((gameRefPath as string).split("/")[1])
+                .update({
+                    Words: firebase.firestore.FieldValue.arrayUnion(element)
+                })
+                .then(() => {
+                    success = true;
+                })
+                .catch(() => {success=false;});
+            }
+        }
+    });
+    
 
+    return success;
+}
+
+export async function getWordsCountPerPerson(): Promise<number> {
+    var data: number = 0;
+  
+    await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .get()
+      .then((document: DocumentSnapshot<DocumentData>) => {
+        console.log(document.data());
+        var test = document.data() as DocumentData;
+        data = (test["Config"]["NbOFPaperPerPerson"] as number);
+      })
+      .catch(() => {});
+  
+    if (data === undefined) return 0;
+    return data;
+  }

@@ -18,10 +18,14 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import VideoLabelIcon from "@material-ui/icons/VideoLabel";
 import StepConnector from "@material-ui/core/StepConnector";
+import CreateIcon from '@material-ui/icons/Create';
+
 
 import ConfigureGame from "../Steps/ConfigureGame/ConfigureGame";
 import SelectName from "../Steps/SelectName/SelectName";
 import WaitingRoom from "../Steps/WaitingRoom/WaitingRoom";
+import WriteWords from "../Steps/WriteWords/WriteWords";
+
 
 import { createGameConfig } from '../../services/firebaseStore';
 
@@ -88,7 +92,7 @@ const StepIconStyles = makeStyles({
 });
 
 function getSteps() {
-  return ["Configurer la partie", "Choisir votre nom", "Sélection des équipes"];
+  return ["Configurer la partie", "Choisir votre nom", "Sélection des équipes", "Écriture des mots"];
 }
 
 function StepIcon(props: StepIconProps) {
@@ -98,7 +102,8 @@ function StepIcon(props: StepIconProps) {
   const icons: { [index: string]: React.ReactElement } = {
     1: <SettingsIcon />,
     2: <GroupAddIcon />,
-    3: <VideoLabelIcon />
+    3: <VideoLabelIcon />,
+    4: <CreateIcon />
   };
 
   return (
@@ -121,6 +126,8 @@ function getStepContent(stepIndex: number) {
       return <SelectName />;
     case 2:
       return <WaitingRoom />;
+    case 3:
+      return <WriteWords />;
     default:
       return "Unknown stepIndex";
   }
