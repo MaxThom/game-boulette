@@ -194,6 +194,7 @@ const Join: React.FC = () => {
                   variant="contained"
                   color="primary"
                   onClick={handleNext}
+                  disabled={activeStep === steps.length - 1}
                 >
                   {activeStep === steps.length - 1 ? "Lancer la partie !" : "Suivant"}
                 </Button>

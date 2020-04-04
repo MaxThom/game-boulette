@@ -103,6 +103,7 @@ export async function createGameConfig(
       .add({
         Status: "Waiting-Room",
         Config: {
+          GameName: GameName,
           Theme: Theme,
           ZoomUrl: ZoomUrl,
           NbOfRound: NbOfRound,

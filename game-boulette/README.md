@@ -11,7 +11,7 @@ Sign in
 Init the project
 
 ### `firebase deploy`
-Deploy to firebase hosting
+Deploy to firebase hosting, make sure to run `npm run build` first and `ctrl+F5` to clear cache when opening the website
 
 ### `npm start`
 
