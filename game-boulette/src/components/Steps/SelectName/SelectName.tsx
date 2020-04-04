@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 
-import { setPlayerName } from "../../../services/firebaseStore";
+import { setPlayerName, getPlayerName } from "../../../services/firebaseStore";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,6 +25,10 @@ const SelectName: React.FC = () => {
   const classes = useStyles();
   const [name, setName] = React.useState<string>("");
   const [disable, setDisable] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    setName(getPlayerName());
+  }, []);
 
   const OnSave = async (): Promise<void> => {
     setDisable(true);
@@ -64,7 +68,7 @@ const SelectName: React.FC = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setName(e.currentTarget.value)
           }
-          defaultValue={name}
+          value={name}
           helperText=""
           variant="outlined"
           size="small"

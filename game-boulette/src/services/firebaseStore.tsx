@@ -9,6 +9,8 @@ import * as firebase from "firebase/app";
 
 var gameRefPath: string | null = localStorage.getItem("BOULETTE_GameRef");
 var playerName: string | null = localStorage.getItem("BOULETTE_PlayerName");
+var wordsSent: string | null = localStorage.getItem("BOULETTE_WordsSent");
+var step: string | null = localStorage.getItem("BOULETTE_Step");
 checkIfGameIsPresent();
 
 console.log(gameRefPath);
@@ -18,8 +20,19 @@ export function getPlayerName(): string {
   return playerName as string;
 }
 
+export function getWordsSent(): string {
+  return wordsSent as string;
+}
+
+export function setGameRef(gameRef: string): void {
+  gameRefPath = "games/" + gameRef;
+  localStorage.setItem("BOULETTE_GameRef", gameRefPath as string);
+  console.log(gameRefPath);
+}
+
 export async function checkIfGameIsPresent(): Promise<void> {
    
+  if (gameRefPath){
     await firebaseStore
     .collection("games")
     .doc((gameRefPath as string).split("/")[1])
@@ -32,7 +45,8 @@ export async function checkIfGameIsPresent(): Promise<void> {
             gameRefPath = null;
             playerName = null;
             localStorage.removeItem("BOULETTE_GameRef");
-            localStorage.removeItem("BOULETTE_PlayerName");
+            localStorage.removeItem("BOULETTE_WordsSent");
+            localStorage.removeItem("BOULETTE_Step");
         } else 
             console.log("OnGoingGameDetected");      
     })
@@ -40,8 +54,10 @@ export async function checkIfGameIsPresent(): Promise<void> {
         gameRefPath = null;
         playerName = null;
         localStorage.removeItem("BOULETTE_GameRef");
-        localStorage.removeItem("BOULETTE_PlayerName");
+        localStorage.removeItem("BOULETTE_WordsSent");
+        localStorage.removeItem("BOULETTE_Step");
     }); 
+  }
     
   }
 
@@ -122,6 +138,8 @@ export async function closeGame(): Promise<boolean> {
 
   gameRefPath = null;
   localStorage.removeItem("BOULETTE_GameRef");
+  localStorage.removeItem("BOULETTE_WordsSent");
+  localStorage.removeItem("BOULETTE_Step");
   return success;
 }
 
@@ -321,6 +339,10 @@ export async function setPlayerWords(words: string[]): Promise<boolean> {
         }
     });
     
+    
+    localStorage.setItem("BOULETTE_WordsSent", "true");
+    wordsSent = "true";
+    
 
     return success;
 }
@@ -342,3 +364,23 @@ export async function getWordsCountPerPerson(): Promise<number> {
     if (data === undefined) return 0;
     return data;
   }
+
+export async function getAllWaitingRoomGame(): Promise<any[]> {
+  var data: any[] = [];
+
+  await firebaseStore
+    .collection("games")
+    .where("Status", "==", "Waiting-Room")
+    .get()
+    .then((querySnapshot: any) => {
+      console.log(querySnapshot);
+      querySnapshot.forEach(function(doc: any) {
+        data.push({"id": doc.id, "data": doc.data()})
+    });
+    })
+    .catch(() => {data = [];});
+    
+    console.log(data);
+  if (data === undefined) return [];
+  return data;
+}
