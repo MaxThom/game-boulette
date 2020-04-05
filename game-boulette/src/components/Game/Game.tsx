@@ -25,13 +25,15 @@ import {
 } from "@firebase/firestore-types";
 import * as firebase from "firebase/app";
 import {
-  getWaitingRoomNames,
-  setPlayerInTeam,
-  getTeamPlayerNames,
   getPlayerName,
   getGameUpdates,
-  setPlayerName,
   setPlayerTurnStatus,
+  getIsHost,
+  setGameStatus,
+  getGameConfig,
+  setGameCurrentTurn,
+  setPlayerTurnName,
+  setGameCurrentRound
 } from "../../services/firebaseStore";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -55,6 +57,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Game: React.FC = () => {
   const classes = useStyles();
+  const [playerName, setPlayerName] = React.useState<string>("");
+  const [isHost, setIsHost] = React.useState<boolean>(false);
+  const [status, setStatus] = React.useState<string>("Waiting-Room");
   const [currentPlayer, setCurrentPlayer] = React.useState<string>("Maxime");
   const [team1, setTeam1] = React.useState<string[]>([]);
   const [team2, setTeam2] = React.useState<string[]>([]);
@@ -64,40 +69,94 @@ const Game: React.FC = () => {
   const [currentWord, setCurrentWord] = React.useState<string>("");
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [timeRemaining, setTimeRemaining] = React.useState<number>(0);
+  
+  const [currentRound, setCurrentRound] = React.useState<number>(1);
+  const [gameConfig, setGameConfig] = React.useState<any>();
+  const [currentTurn, setCurrentTurn] = React.useState<number>(0);
+  const [counter, setCounter] = React.useState(0);
+  
 
   useEffect(() => {
     getGameUpdates(onGameUpdates);
-  }, []);
+    setPlayerName(getPlayerName());
+    setIsHost(getIsHost());
+    getGameConfig().then((data: any) => {
+      setGameConfig(data);
+    });    
+    counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+    if (counter === 0 && isPlaying) OnEndTurn();
+  }, [counter, setGameConfig]);
 
   const onGameUpdates = (data: DocumentData): void => {
     console.log(data);
+    if (data) {
+      if (data["Status"] !== undefined)
+      setStatus(data["Status"] as string);
 
-    if (data["Team1"] === undefined) setTeam1([]);
-    else setTeam1(data["Team1"] as string[]);
+      if (data["Team1"] !== undefined) 
+      setTeam1(data["Team1"] as string[]);
 
-    if (data["Team2"] === undefined) setTeam2([]);
-    else setTeam2(data["Team2"] as string[]);
+      if (data["Team2"] !== undefined)
+      setTeam2(data["Team2"] as string[]);
 
-    if (data["Game"]["StandingPlayer"]["Name"] === undefined)
-      setCurrentPlayer("");
-    else setCurrentPlayer(data["Game"]["StandingPlayer"]["Name"] as string);
+      if (data["Game"]["StandingPlayer"]["Name"] !== undefined)
+      setCurrentPlayer(data["Game"]["StandingPlayer"]["Name"] as string);
 
-    if (data["Game"]["StandingPlayer"]["IsPlaying"] === undefined)
-      setIsPlaying(false);
-    else setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
+      if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) 
+      setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
 
-    if (data["Game"]["ScoreTeam1"] === undefined) setScore1(0);
-    else setScore1(data["Game"]["ScoreTeam1"] as number);
+      if (data["Game"]["ScoreTeam1"] !== undefined)
+      setScore1(data["Game"]["ScoreTeam1"] as number);
 
-    if (data["Game"]["ScoreTeam2"] === undefined) setScore2(0);
-    else setScore2(data["Game"]["ScoreTeam2"] as number);
+      if (data["Game"]["ScoreTeam2"] !== undefined) 
+      setScore2(data["Game"]["ScoreTeam2"] as number);
 
-    if (data["Game"]["RemainingWords"] === undefined) setRemainingWords([]);
-    else setRemainingWords(data["Game"]["RemainingWords"] as string[]);
+      if (data["Game"]["RemainingWords"] !== undefined)
+      setRemainingWords(data["Game"]["RemainingWords"] as string[]);
+
+      if (data["Game"]["CurrentRound"] !== undefined) 
+      setCurrentRound(data["Game"]["CurrentRound"] as number);    
+
+      if (data["Game"]["CurrentTurn"] !== undefined) 
+      { setCurrentTurn(data["Game"]["CurrentTurn"] as number);}
+    }
   };
 
-  const onStartTurn = (): void => {
+  const SetNewTurn = (): void => {
+      console.log(currentTurn);
+      if (currentTurn % 2 === 0) {
+        // Team 1
+        console.log(~~(currentTurn / 2));
+        console.log(~~(currentTurn / 2)% team1.length);
+        setPlayerTurnName(team1[(currentTurn / 2) % team1.length]);
+      } else {
+        // Team 2
+        console.log(~~(currentTurn / 2));
+        console.log(~~(currentTurn / 2)% team2.length);
+        setPlayerTurnName(team2[~~(currentTurn / 2) % team2.length]);
+      }      
+  };
+
+  const OnStartTurn = (): void => {
     setPlayerTurnStatus(true);
+    console.log(gameConfig);
+    console.log(gameConfig["TimePerPersonSec"]);
+    setTimeRemaining(gameConfig["TimePerPersonSec"])
+    setCounter(3);
+  };
+
+  const OnEndTurn = (): void => {
+    setPlayerTurnStatus(false);
+    setGameCurrentTurn(currentTurn+1);
+    setCurrentTurn(currentTurn+1);
+    SetNewTurn();
+  };
+
+  const OnGameStart = (): void => {
+    setGameStatus("Game-Started");
+    setCurrentTurn(0);
+    setGameCurrentTurn(0);
+    SetNewTurn();
   };
 
   return (
@@ -135,6 +194,13 @@ const Game: React.FC = () => {
           </Grid>
           <Grid item xs={1} />
           <Grid item xs={4}>
+          {status === "Game-Started" ? (
+            <React.Fragment>
+            <Typography component={"span"}>
+              Manche # 
+              <strong>{currentRound}</strong>
+            </Typography>
+            <br />
             <Typography component={"span"} variant="h5">
               Tour de <br />
               <strong>{currentPlayer}</strong>
@@ -145,7 +211,7 @@ const Game: React.FC = () => {
             <Typography component={"span"}>
               <strong>Temps restant</strong>
               <br />
-              {timeRemaining} secondes
+              {counter} secondes
               <br />
               <br />
             </Typography>
@@ -154,11 +220,24 @@ const Game: React.FC = () => {
                 variant="outlined"
                 color="secondary"
                 className={classes.word}
+                disabled={playerName !== currentPlayer}
               >
                 Cliquer à plusieurs reprises pour dévoiler le mot
               </Button>
             ) : (
               <React.Fragment />
+            )}
+            </React.Fragment>
+            ) : (
+              <Button
+                color="primary"
+                variant="contained"
+                size="large"
+                disabled={!isHost}
+                onClick={() => OnGameStart()}
+              >
+                Commencer la partie !
+              </Button>
             )}
           </Grid>
           <Grid item xs={1} />
@@ -210,13 +289,15 @@ const Game: React.FC = () => {
           </Grid>
           <Grid item xs={1} />
           <Grid item xs={4}>
-            {isPlaying ? (
+          {status === "Game-Started" ? (
+            isPlaying ? (
               <React.Fragment>
                 <Button
                   className={classes.middleButton}
                   variant="contained"
                   color="secondary"
                   startIcon={<SpellcheckIcon />}
+                  disabled={playerName !== currentPlayer}
                 >
                   Trouvé
                 </Button>
@@ -224,6 +305,7 @@ const Game: React.FC = () => {
                   variant="contained"
                   color="default"
                   startIcon={<SkipNextIcon />}
+                  disabled={playerName !== currentPlayer}
                 >
                   Passer
                 </Button>
@@ -234,12 +316,14 @@ const Game: React.FC = () => {
                   variant="contained"
                   color="primary"
                   startIcon={<PlayArrowIcon />}
-                  onClick={() => onStartTurn()}
+                  onClick={() => OnStartTurn()}
+                  disabled={playerName !== currentPlayer}
                 >
                   Commencer !
                 </Button>
               </React.Fragment>
-            )}
+            )
+          ) : (<React.Fragment/>)}
           </Grid>
           <Grid item xs={1} />
           <Grid item xs={3}>

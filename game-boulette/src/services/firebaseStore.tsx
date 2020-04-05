@@ -11,10 +11,15 @@ var gameRefPath: string | null = localStorage.getItem("BOULETTE_GameRef");
 var playerName: string | null = localStorage.getItem("BOULETTE_PlayerName");
 var wordsSent: string | null = localStorage.getItem("BOULETTE_WordsSent");
 var step: string | null = localStorage.getItem("BOULETTE_Step");
+var isHost: string | null = localStorage.getItem("BOULETTE_IsHost");
 checkIfGameIsPresent();
 
 console.log(gameRefPath);
 console.log(playerName);
+
+export function getIsHost(): boolean {
+  return isHost === "true";
+}
 
 export function getPlayerName(): string {
   return playerName as string;
@@ -44,6 +49,7 @@ export async function checkIfGameIsPresent(): Promise<void> {
         {
             gameRefPath = null;
             playerName = null;
+            localStorage.removeItem("BOULETTE_IsHost");
             localStorage.removeItem("BOULETTE_GameRef");
             localStorage.removeItem("BOULETTE_WordsSent");
             localStorage.removeItem("BOULETTE_Step");
@@ -53,10 +59,16 @@ export async function checkIfGameIsPresent(): Promise<void> {
     .catch(() => {
         gameRefPath = null;
         playerName = null;
+        localStorage.removeItem("BOULETTE_IsHost");
         localStorage.removeItem("BOULETTE_GameRef");
         localStorage.removeItem("BOULETTE_WordsSent");
         localStorage.removeItem("BOULETTE_Step");
-    }); 
+    });     
+  } else {
+    localStorage.removeItem("BOULETTE_IsHost");
+    localStorage.removeItem("BOULETTE_GameRef");
+    localStorage.removeItem("BOULETTE_WordsSent");
+    localStorage.removeItem("BOULETTE_Step");
   }
     
   }
@@ -87,6 +99,16 @@ export async function createGameConfig(
           NbOFPaperPerPerson: NbOFPaperPerPerson,
           TimePerPersonSec: TimePerPersonSec
         },
+        Game: {
+          ScoreTeam1: 0,
+          ScoreTeam2: 0,
+          CurrentRound: 1,
+          CurrentTurn: 0,
+          StandingPlayer: {
+            IsPlaying: false,
+            Name: ""
+          }
+        },
         WaitingRoom: [],
         Team1: [],
         Team2: []
@@ -109,12 +131,27 @@ export async function createGameConfig(
           NbOfRound: NbOfRound,
           NbOFPaperPerPerson: NbOFPaperPerPerson,
           TimePerPersonSec: TimePerPersonSec
-        }
+        },
+        Game: {
+          ScoreTeam1: 0,
+          ScoreTeam2: 0,
+          CurrentRound: 1,
+          CurrentTurn: 0,
+          StandingPlayer: {
+            IsPlaying: false,
+            Name: ""
+          }
+        },
+        WaitingRoom: [],
+        Team1: [],
+        Team2: []
       })
       .then((ref: DocumentReference) => {
         success = true;
         gameRefPath = ref.path;
         localStorage.setItem("BOULETTE_GameRef", ref.path);
+        isHost = "true";
+        localStorage.setItem("BOULETTE_IsHost", isHost);
       })
       .catch(() => {
         success = false;
@@ -424,6 +461,25 @@ export async function setPlayerTurnName(name: string): Promise<boolean> {
       return success;
 }
 
+export async function setGameCurrentTurn(round: number): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({       
+          "Game.CurrentTurn": round
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
 export async function setTeam1Score(score: number): Promise<boolean> {
   var success: boolean = false;
 
@@ -462,7 +518,7 @@ export async function setTeam2Score(score: number): Promise<boolean> {
       return success;
 }
 
-export async function setCurrentRound(round: number): Promise<boolean> {
+export async function setGameCurrentRound(round: number): Promise<boolean> {
   var success: boolean = false;
 
   await firebaseStore
@@ -498,4 +554,40 @@ export async function setRemainingWords(words: string[]): Promise<boolean> {
       });
 
       return success;
+}
+
+export async function setGameStatus(status: string): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({
+          "Status": status
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function getGameConfig(): Promise<any> {
+  var data: any;
+
+  await firebaseStore
+    .collection("games")
+    .doc((gameRefPath as string).split("/")[1])
+    .get()
+    .then((document: DocumentSnapshot<DocumentData>) => {
+      console.log(document.data());
+      var test = document.data() as DocumentData;
+      data = (test["Config"] as any);
+    })
+    .catch(() => {});
+
+  return data;
 }
