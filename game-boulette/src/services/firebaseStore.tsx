@@ -385,3 +385,117 @@ export async function getAllWaitingRoomGame(): Promise<any[]> {
   if (data === undefined) return [];
   return data;
 }
+
+export async function setPlayerTurnStatus(status: boolean): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({       
+          "Game.StandingPlayer.IsPlaying": status
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function setPlayerTurnName(name: string): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({       
+          "Game.StandingPlayer.Name": name
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function setTeam1Score(score: number): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({  
+        "Game.ScoreTeam1": score
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function setTeam2Score(score: number): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({       
+          "Game.ScoreTeam2": score
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function setCurrentRound(round: number): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({
+          "Game.CurrentRound": round
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function setRemainingWords(words: string[]): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({
+          "Game.RemainingWords": words
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}

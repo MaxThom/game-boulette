@@ -5,6 +5,7 @@ import {
   createStyles,
   withStyles
 } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 import clsx from "clsx";
 import Button from "@material-ui/core/Button";
 import Title from "../Utilities/Title/Title";
@@ -136,12 +137,15 @@ function getStepContent(stepIndex: number) {
 const Host: React.FC = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-
+  let history = useHistory();  
   const steps = getSteps();
 
   
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
+    if (activeStep === steps.length-1) {      
+      history.push('/game')
+    }
   };
 
   const handleBack = () => {

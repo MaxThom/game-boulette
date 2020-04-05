@@ -1,4 +1,4 @@
-import React from "react";
+import React, {SyntheticEvent} from "react";
 import {
   makeStyles,
   Theme,
@@ -6,6 +6,7 @@ import {
   withStyles
 } from "@material-ui/core/styles";
 import clsx from "clsx";
+import { useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Title from "../Utilities/Title/Title";
 import Surface from "../Utilities/Surface/Surface";
@@ -136,12 +137,15 @@ function getStepContent(stepIndex: number) {
 const Join: React.FC = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-
+  let history = useHistory();
   const steps = getSteps();
 
   
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
+    if (activeStep === steps.length-1) {      
+      history.push('/game')
+    }
   };
 
   const handleBack = () => {
@@ -194,7 +198,6 @@ const Join: React.FC = () => {
                   variant="contained"
                   color="primary"
                   onClick={handleNext}
-                  disabled={activeStep === steps.length - 1}
                 >
                   {activeStep === steps.length - 1 ? "Lancer la partie !" : "Suivant"}
                 </Button>

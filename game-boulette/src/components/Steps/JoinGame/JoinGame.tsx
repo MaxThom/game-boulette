@@ -11,7 +11,10 @@ import IconButton from "@material-ui/core/IconButton";
 import LinedSurface from "../../Utilities/Surface/LinedSurface";
 import SyncIcon from "@material-ui/icons/Sync";
 
-import { getAllWaitingRoomGame, setGameRef } from "../../../services/firebaseStore";
+import {
+  getAllWaitingRoomGame,
+  setGameRef,
+} from "../../../services/firebaseStore";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,12 +25,10 @@ const useStyles = makeStyles((theme: Theme) =>
     fill: {
       width: "100%",
     },
-    joinRoom: {
-      marginLeft: "50%",
-    },
+    joinRoom: {},
     row: {
-      height: "10%"
-    }
+      height: "10%",
+    },
   })
 );
 
@@ -54,7 +55,7 @@ const ConfigureGame: React.FC = () => {
   };
 
   return (
-    <form className={classes.root} noValidate autoComplete="off">
+    <div className={classes.root}>
       <hr />
       <br />
       <Grid
@@ -69,7 +70,11 @@ const ConfigureGame: React.FC = () => {
           <Typography component={"span"} variant="h5">
             Choisir une partie
           </Typography>
-          <IconButton color="primary" aria-label="add to shopping cart" onClick={() => OnRefresh()}>
+          <IconButton
+            color="primary"
+            aria-label="add to shopping cart"
+            onClick={() => OnRefresh()}
+          >
             <SyncIcon fontSize="large" />
           </IconButton>
         </Grid>
@@ -79,27 +84,39 @@ const ConfigureGame: React.FC = () => {
             <Grid item xs={2} />
             <Grid item xs={5}>
               <LinedSurface>
-        <strong>{row.data["Config"]["GameName"]}</strong>
-                <Button
-                  id={row.id}
-                  variant="contained"
-                  color="secondary"
-                  className={classes.joinRoom}
-                  size="small"
-                  endIcon={<ArrowForwardIcon />}
-                  onClick={e => {
-                    OnChooseGame(row.id);
-                  }}
+                <Grid
+                  container
+                  direction="row"
+                  justify="flex-start"
+                  alignItems="center"
+                  spacing={3}
                 >
-                  Choisir
-                </Button>
+                  <Grid item xs={8}>
+                    <strong>{row.data["Config"]["GameName"]}</strong>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Button
+                      id={row.id}
+                      variant="contained"
+                      color="secondary"
+                      className={classes.joinRoom}
+                      size="small"
+                      endIcon={<ArrowForwardIcon />}
+                      onClick={(e) => {
+                        OnChooseGame(row.id);
+                      }}
+                    >
+                      Choisir
+                    </Button>
+                  </Grid>
+                </Grid>
               </LinedSurface>
             </Grid>
             <Grid item xs={5} />
           </React.Fragment>
         ))}
       </Grid>
-    </form>
+    </div>
   );
 };
 

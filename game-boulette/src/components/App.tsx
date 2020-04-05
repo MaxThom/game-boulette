@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import MainMenu from "./MainMenu/MainMenu";
 import Host from "./Host/Host";
 import Join from "./Join/Join";
+import Game from "./Game/Game";
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <Switch>
             <Route path="/join" component={Join}></Route>
             <Route path="/host" component={Host}></Route>
+            <Route path="/game" component={Game}></Route>
             <Route path="/" component={MainMenu}></Route>
           </Switch>
         </BrowserRouter>
@@ -28,3 +30,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

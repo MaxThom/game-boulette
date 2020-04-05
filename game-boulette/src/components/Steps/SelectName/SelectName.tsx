@@ -37,9 +37,8 @@ const SelectName: React.FC = () => {
   };
 
   return (
-    <form className={classes.root} noValidate autoComplete="off">
+    <div className={classes.root} >
     <hr />
-
     <br />
     <Grid
       container
@@ -92,7 +91,7 @@ const SelectName: React.FC = () => {
         </Grid>
         <Grid item xs={2} />
       </Grid>
-  </form>
+  </div>
   );
 }
 
