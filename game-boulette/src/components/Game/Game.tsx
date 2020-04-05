@@ -75,6 +75,12 @@ const Game: React.FC = () => {
   const [currentTurn, setCurrentTurn] = React.useState<number>(0);
   const [counter, setCounter] = React.useState(0);
   
+  const OnEndTurn = (): void => {
+    setPlayerTurnStatus(false);
+    setGameCurrentTurn(currentTurn+1);
+    setCurrentTurn(currentTurn+1);
+    SetNewTurn();
+  };
 
   useEffect(() => {
     getGameUpdates(onGameUpdates);
@@ -82,11 +88,16 @@ const Game: React.FC = () => {
     setIsHost(getIsHost());
     getGameConfig().then((data: any) => {
       setGameConfig(data);
-    });    
+    });
+  }, []);
+
+  useEffect(() => {    
     counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
     if (counter === 0 && isPlaying) OnEndTurn();
-  }, [counter, setGameConfig]);
+  }, [counter]);
 
+
+  
   const onGameUpdates = (data: DocumentData): void => {
     console.log(data);
     if (data) {
@@ -102,8 +113,11 @@ const Game: React.FC = () => {
       if (data["Game"]["StandingPlayer"]["Name"] !== undefined)
       setCurrentPlayer(data["Game"]["StandingPlayer"]["Name"] as string);
 
-      if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) 
-      setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
+      if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) {
+        if (data["Game"]["StandingPlayer"]["IsPlaying"] as boolean === true && data["Game"]["StandingPlayer"]["IsPlaying"] !== isPlaying)
+          setCounter(5);
+        setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
+      }
 
       if (data["Game"]["ScoreTeam1"] !== undefined)
       setScore1(data["Game"]["ScoreTeam1"] as number);
@@ -142,20 +156,15 @@ const Game: React.FC = () => {
     console.log(gameConfig);
     console.log(gameConfig["TimePerPersonSec"]);
     setTimeRemaining(gameConfig["TimePerPersonSec"])
-    setCounter(3);
+    //setCounter(3);
   };
 
-  const OnEndTurn = (): void => {
-    setPlayerTurnStatus(false);
-    setGameCurrentTurn(currentTurn+1);
-    setCurrentTurn(currentTurn+1);
-    SetNewTurn();
-  };
+  
 
   const OnGameStart = (): void => {
     setGameStatus("Game-Started");
-    setCurrentTurn(0);
-    setGameCurrentTurn(0);
+    setCurrentTurn(1);
+    setGameCurrentTurn(1);
     SetNewTurn();
   };
 
