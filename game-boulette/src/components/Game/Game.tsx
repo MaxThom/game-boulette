@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 
+import Countdown from 'react-countdown-now';
+
 import Title from "../Utilities/Title/Title";
 import Surface from "../Utilities/Surface/Surface";
 import DefaultLinedSurface from "../Utilities/Surface/DefaultLinedSurface";
@@ -34,7 +36,9 @@ import {
   setGameCurrentTurn,
   setPlayerTurnName,
   setGameCurrentRound,
-  setGameRemainingWords
+  setGameRemainingWords,
+  setTeam1Score,
+  setTeam2Score
 } from "../../services/firebaseStore";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -55,6 +59,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
 const Game: React.FC = () => {
   const classes = useStyles();
@@ -84,62 +92,60 @@ const Game: React.FC = () => {
     SetNewTurn();
   };
 
+  
+
   useEffect(() => {
+    const onGameUpdates = (data: DocumentData): void => {
+      console.log(data);
+      if (data) {
+        if (data["Words"] !== undefined)
+        setWords(data["Words"] as string[]);
+  
+        if (data["Status"] !== undefined)
+        setStatus(data["Status"] as string);
+  
+        if (data["Team1"] !== undefined) 
+        setTeam1(data["Team1"] as string[]);
+  
+        if (data["Team2"] !== undefined)
+        setTeam2(data["Team2"] as string[]);
+  
+        if (data["Game"]["StandingPlayer"]["Name"] !== undefined)
+        setCurrentPlayer(data["Game"]["StandingPlayer"]["Name"] as string);
+  
+        if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) {
+          setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
+        }
+  
+        if (data["Game"]["ScoreTeam1"] !== undefined)
+        setScore1(data["Game"]["ScoreTeam1"] as number);
+  
+        if (data["Game"]["ScoreTeam2"] !== undefined) 
+        setScore2(data["Game"]["ScoreTeam2"] as number);
+  
+        if (data["Game"]["RemainingWords"] !== undefined)
+        setRemainingWords(data["Game"]["RemainingWords"] as string[]);
+  
+        if (data["Game"]["CurrentRound"] !== undefined) 
+        setCurrentRound(data["Game"]["CurrentRound"] as number);    
+  
+        if (data["Game"]["CurrentTurn"] !== undefined) 
+        { setCurrentTurn(data["Game"]["CurrentTurn"] as number);}
+      }
+    };
     getGameUpdates(onGameUpdates);
     setPlayerName(getPlayerName());
     setIsHost(getIsHost());
     getGameConfig().then((data: any) => {
       setGameConfig(data);
     });
-  }, []);
+    
+  }, [playerName, isHost, isPlaying]);
 
-  useEffect(() => {    
+  useEffect(() => {
     counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
-    if (counter === 0 && isPlaying) OnEndTurn();
+    if (counter === 0 && isPlaying) OnEndTurn();    
   }, [counter]);
-
-
-  
-  const onGameUpdates = (data: DocumentData): void => {
-    console.log(data);
-    if (data) {
-      if (data["Words"] !== undefined)
-      setWords(data["Words"] as string[]);
-
-      if (data["Status"] !== undefined)
-      setStatus(data["Status"] as string);
-
-      if (data["Team1"] !== undefined) 
-      setTeam1(data["Team1"] as string[]);
-
-      if (data["Team2"] !== undefined)
-      setTeam2(data["Team2"] as string[]);
-
-      if (data["Game"]["StandingPlayer"]["Name"] !== undefined)
-      setCurrentPlayer(data["Game"]["StandingPlayer"]["Name"] as string);
-
-      if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) {
-        if (data["Game"]["StandingPlayer"]["IsPlaying"] as boolean === true && data["Game"]["StandingPlayer"]["IsPlaying"] !== isPlaying)
-          setCounter(data["Config"]["TimePerPersonSec"]);
-        setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
-      }
-
-      if (data["Game"]["ScoreTeam1"] !== undefined)
-      setScore1(data["Game"]["ScoreTeam1"] as number);
-
-      if (data["Game"]["ScoreTeam2"] !== undefined) 
-      setScore2(data["Game"]["ScoreTeam2"] as number);
-
-      if (data["Game"]["RemainingWords"] !== undefined)
-      setRemainingWords(data["Game"]["RemainingWords"] as string[]);
-
-      if (data["Game"]["CurrentRound"] !== undefined) 
-      setCurrentRound(data["Game"]["CurrentRound"] as number);    
-
-      if (data["Game"]["CurrentTurn"] !== undefined) 
-      { setCurrentTurn(data["Game"]["CurrentTurn"] as number);}
-    }
-  };
 
   const SetNewTurn = (): void => {
       console.log(currentTurn);
@@ -158,14 +164,12 @@ const Game: React.FC = () => {
 
   const OnStartTurn = (): void => {
     setPlayerTurnStatus(true);
-    console.log(gameConfig);
-    console.log(gameConfig["TimePerPersonSec"]);
     setTimeRemaining(gameConfig["TimePerPersonSec"])
-    
+    setCounter(gameConfig["TimePerPersonSec"] as number);
+    let x = getRandomInt(remainingWords.length);
+    setCurrentWord(remainingWords[x]);
   };
-
   
-
   const OnGameStart = (): void => {
     setGameStatus("Game-Started");
     console.log(words);
@@ -176,6 +180,27 @@ const Game: React.FC = () => {
     SetNewTurn();
 
   };
+
+  const OnWordFound = (): void => {
+    if (currentTurn % 2 === 0) {
+      // Team 1
+      setTeam1Score(score1+1);
+    } else {
+      // Team 2
+      setTeam2Score(score2+1);
+    }
+    
+    setRemainingWords(remainingWords.filter(x => x !== currentWord));
+    setGameRemainingWords(remainingWords.filter(x => x !== currentWord));
+    let x = getRandomInt(remainingWords.length);
+    setCurrentWord(remainingWords[x]);
+  };
+
+  const OnWordSkip = (): void => {
+    let x = getRandomInt(remainingWords.length);
+    setCurrentWord(remainingWords[x]);
+  };
+
 
   return (
     <div>
@@ -240,7 +265,7 @@ const Game: React.FC = () => {
                 className={classes.word}
                 disabled={playerName !== currentPlayer}
               >
-                Cliquer à plusieurs reprises pour dévoiler le mot
+                {playerName === currentPlayer ? currentWord : "Cliquer à plusieurs reprises pour dévoiler le mot"}
               </Button>
             ) : (
               <React.Fragment />
@@ -316,6 +341,7 @@ const Game: React.FC = () => {
                   color="secondary"
                   startIcon={<SpellcheckIcon />}
                   disabled={playerName !== currentPlayer}
+                  onClick={() => OnWordFound()}
                 >
                   Trouvé
                 </Button>
@@ -324,6 +350,7 @@ const Game: React.FC = () => {
                   color="default"
                   startIcon={<SkipNextIcon />}
                   disabled={playerName !== currentPlayer}
+                  onClick={() => OnWordSkip()}
                 >
                   Passer
                 </Button>
