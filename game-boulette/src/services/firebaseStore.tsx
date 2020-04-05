@@ -107,8 +107,10 @@ export async function createGameConfig(
           StandingPlayer: {
             IsPlaying: false,
             Name: ""
-          }
+          },
+          RemainingWords: []
         },
+        Words: [],
         WaitingRoom: [],
         Team1: [],
         Team2: []
@@ -140,8 +142,10 @@ export async function createGameConfig(
           StandingPlayer: {
             IsPlaying: false,
             Name: ""
-          }
+          },
+          RemainingWords: []
         },
+        Words: [],
         WaitingRoom: [],
         Team1: [],
         Team2: []
@@ -537,9 +541,10 @@ export async function setGameCurrentRound(round: number): Promise<boolean> {
       return success;
 }
 
-export async function setRemainingWords(words: string[]): Promise<boolean> {
+export async function setGameRemainingWords(words: string[]): Promise<boolean> {
   var success: boolean = false;
-
+  console.log("DSF")
+  console.log(words)
   await firebaseStore
       .collection("games")
       .doc((gameRefPath as string).split("/")[1])

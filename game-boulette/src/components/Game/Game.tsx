@@ -33,7 +33,8 @@ import {
   getGameConfig,
   setGameCurrentTurn,
   setPlayerTurnName,
-  setGameCurrentRound
+  setGameCurrentRound,
+  setGameRemainingWords
 } from "../../services/firebaseStore";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -65,6 +66,7 @@ const Game: React.FC = () => {
   const [team2, setTeam2] = React.useState<string[]>([]);
   const [score1, setScore1] = React.useState<number>(0);
   const [score2, setScore2] = React.useState<number>(0);
+  const [words, setWords] = React.useState<string[]>([]);
   const [remainingWords, setRemainingWords] = React.useState<string[]>([]);
   const [currentWord, setCurrentWord] = React.useState<string>("");
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
@@ -101,6 +103,9 @@ const Game: React.FC = () => {
   const onGameUpdates = (data: DocumentData): void => {
     console.log(data);
     if (data) {
+      if (data["Words"] !== undefined)
+      setWords(data["Words"] as string[]);
+
       if (data["Status"] !== undefined)
       setStatus(data["Status"] as string);
 
@@ -115,7 +120,7 @@ const Game: React.FC = () => {
 
       if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) {
         if (data["Game"]["StandingPlayer"]["IsPlaying"] as boolean === true && data["Game"]["StandingPlayer"]["IsPlaying"] !== isPlaying)
-          setCounter(5);
+          setCounter(data["Config"]["TimePerPersonSec"]);
         setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
       }
 
@@ -156,16 +161,20 @@ const Game: React.FC = () => {
     console.log(gameConfig);
     console.log(gameConfig["TimePerPersonSec"]);
     setTimeRemaining(gameConfig["TimePerPersonSec"])
-    //setCounter(3);
+    
   };
 
   
 
   const OnGameStart = (): void => {
     setGameStatus("Game-Started");
+    console.log(words);
+    setRemainingWords(words);
+    setGameRemainingWords(words);
     setCurrentTurn(1);
     setGameCurrentTurn(1);
     SetNewTurn();
+
   };
 
   return (
