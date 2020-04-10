@@ -106,7 +106,8 @@ export async function createGameConfig(
           CurrentTurn: 0,
           StandingPlayer: {
             IsPlaying: false,
-            Name: ""
+            Name: "",
+            TimeRemaining: TimePerPersonSec
           },
           RemainingWords: []
         },
@@ -454,6 +455,25 @@ export async function setPlayerTurnName(name: string): Promise<boolean> {
       .doc((gameRefPath as string).split("/")[1])
       .update({       
           "Game.StandingPlayer.Name": name
+      })
+      .then(() => {
+        success = true;
+      })
+      .catch(() => {
+        success = false;
+      });
+
+      return success;
+}
+
+export async function setPlayerTurnTimeRemaining(time: number): Promise<boolean> {
+  var success: boolean = false;
+
+  await firebaseStore
+      .collection("games")
+      .doc((gameRefPath as string).split("/")[1])
+      .update({       
+          "Game.StandingPlayer.TimeRemaining": time
       })
       .then(() => {
         success = true;

@@ -38,7 +38,8 @@ import {
   setGameCurrentRound,
   setGameRemainingWords,
   setTeam1Score,
-  setTeam2Score
+  setTeam2Score,
+  setPlayerTurnTimeRemaining
 } from "../../services/firebaseStore";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -92,8 +93,6 @@ const Game: React.FC = () => {
     SetNewTurn();
   };
 
-  
-
   useEffect(() => {
     const onGameUpdates = (data: DocumentData): void => {
       console.log(data);
@@ -113,10 +112,12 @@ const Game: React.FC = () => {
         if (data["Game"]["StandingPlayer"]["Name"] !== undefined)
         setCurrentPlayer(data["Game"]["StandingPlayer"]["Name"] as string);
   
-        if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined) {
-          setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
-        }
-  
+        if (data["Game"]["StandingPlayer"]["IsPlaying"] !== undefined)
+        setIsPlaying(data["Game"]["StandingPlayer"]["IsPlaying"] as boolean);
+        
+        if (data["Game"]["StandingPlayer"]["TimeRemaining"] !== undefined)
+        setTimeRemaining(data["Game"]["StandingPlayer"]["TimeRemaining"] as number);          
+
         if (data["Game"]["ScoreTeam1"] !== undefined)
         setScore1(data["Game"]["ScoreTeam1"] as number);
   
@@ -143,8 +144,8 @@ const Game: React.FC = () => {
   }, [playerName, isHost, isPlaying]);
 
   useEffect(() => {
-    counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
-    if (counter === 0 && isPlaying) OnEndTurn();    
+    counter > 0 && setTimeout(() => {setCounter(counter - 1); setPlayerTurnTimeRemaining(counter);}, 1000);
+    if (counter === 0 && isPlaying) { OnEndTurn(); setPlayerTurnTimeRemaining(counter);};    
   }, [counter]);
 
   const SetNewTurn = (): void => {
@@ -164,7 +165,7 @@ const Game: React.FC = () => {
 
   const OnStartTurn = (): void => {
     setPlayerTurnStatus(true);
-    setTimeRemaining(gameConfig["TimePerPersonSec"])
+    setPlayerTurnTimeRemaining(gameConfig["TimePerPersonSec"] as number);
     setCounter(gameConfig["TimePerPersonSec"] as number);
     let x = getRandomInt(remainingWords.length);
     setCurrentWord(remainingWords[x]);
@@ -182,7 +183,7 @@ const Game: React.FC = () => {
   };
 
   const OnWordFound = (): void => {
-    if (currentTurn % 2 === 0) {
+    if (currentTurn % 2 === 1) {
       // Team 1
       setTeam1Score(score1+1);
     } else {
@@ -254,7 +255,7 @@ const Game: React.FC = () => {
             <Typography component={"span"}>
               <strong>Temps restant</strong>
               <br />
-              {counter} secondes
+              {timeRemaining} secondes
               <br />
               <br />
             </Typography>
