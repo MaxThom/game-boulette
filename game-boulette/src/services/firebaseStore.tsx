@@ -102,7 +102,7 @@ export async function createGameConfig(
         Game: {
           ScoreTeam1: 0,
           ScoreTeam2: 0,
-          CurrentRound: 1,
+          CurrentRound: 0,
           CurrentTurn: 0,
           StandingPlayer: {
             IsPlaying: false,
@@ -183,6 +183,7 @@ export async function closeGame(): Promise<boolean> {
   localStorage.removeItem("BOULETTE_GameRef");
   localStorage.removeItem("BOULETTE_WordsSent");
   localStorage.removeItem("BOULETTE_Step");
+  localStorage.removeItem("BOULETTE_IsHost");
   return success;
 }
 
