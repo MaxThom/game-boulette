@@ -8,8 +8,7 @@ import SaveIcon from "@material-ui/icons/Save";
 
 import {
   getWordsCountPerPerson,
-  setPlayerWords,
-  getWordsSent
+  setPlayerWords
 } from "../../../services/firebaseStore";
 
 const range = (start: number, stop: number, step: number) =>
@@ -37,13 +36,13 @@ const WriteWords: React.FC = () => {
     getWordsCountPerPerson().then((data: any) => {
       setWordCount(range(1, data, 1));
     });
-    setDisable(getWordsSent() === "true");
   }, []);
 
   const OnSave = async (): Promise<void> => {
     setDisable(true);
     console.log(words);
     var isSuccess = await setPlayerWords(words);
+    setDisable(false);
   };
 
   return (

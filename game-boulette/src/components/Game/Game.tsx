@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 
-import Countdown from "react-countdown-now";
-
 import Title from "../Utilities/Title/Title";
 import Surface from "../Utilities/Surface/Surface";
 import DefaultLinedSurface from "../Utilities/Surface/DefaultLinedSurface";

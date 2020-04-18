@@ -9,7 +9,6 @@ import * as firebase from "firebase/app";
 
 var gameRefPath: string | null = localStorage.getItem("BOULETTE_GameRef");
 var playerName: string | null = localStorage.getItem("BOULETTE_PlayerName");
-var wordsSent: string | null = localStorage.getItem("BOULETTE_WordsSent");
 var step: string | null = localStorage.getItem("BOULETTE_Step");
 var isHost: string | null = localStorage.getItem("BOULETTE_IsHost");
 checkIfGameIsPresent();
@@ -23,10 +22,6 @@ export function getIsHost(): boolean {
 
 export function getPlayerName(): string {
   return playerName as string;
-}
-
-export function getWordsSent(): string {
-  return wordsSent as string;
 }
 
 export function setGameRef(gameRef: string): void {
@@ -51,7 +46,6 @@ export async function checkIfGameIsPresent(): Promise<void> {
             playerName = null;
             localStorage.removeItem("BOULETTE_IsHost");
             localStorage.removeItem("BOULETTE_GameRef");
-            localStorage.removeItem("BOULETTE_WordsSent");
             localStorage.removeItem("BOULETTE_Step");
         } else 
             console.log("OnGoingGameDetected");      
@@ -61,13 +55,11 @@ export async function checkIfGameIsPresent(): Promise<void> {
         playerName = null;
         localStorage.removeItem("BOULETTE_IsHost");
         localStorage.removeItem("BOULETTE_GameRef");
-        localStorage.removeItem("BOULETTE_WordsSent");
         localStorage.removeItem("BOULETTE_Step");
     });     
   } else {
     localStorage.removeItem("BOULETTE_IsHost");
     localStorage.removeItem("BOULETTE_GameRef");
-    localStorage.removeItem("BOULETTE_WordsSent");
     localStorage.removeItem("BOULETTE_Step");
   }
     
@@ -181,7 +173,6 @@ export async function closeGame(): Promise<boolean> {
 
   gameRefPath = null;
   localStorage.removeItem("BOULETTE_GameRef");
-  localStorage.removeItem("BOULETTE_WordsSent");
   localStorage.removeItem("BOULETTE_Step");
   localStorage.removeItem("BOULETTE_IsHost");
   return success;
@@ -381,12 +372,7 @@ export async function setPlayerWords(words: string[]): Promise<boolean> {
                 .catch(() => {success=false;});
             }
         }
-    });
-    
-    
-    localStorage.setItem("BOULETTE_WordsSent", "true");
-    wordsSent = "true";
-    
+    });   
 
     return success;
 }
