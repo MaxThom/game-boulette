@@ -110,6 +110,8 @@ export async function createGameConfig(
       })
       .then(() => {
         success = true;
+        isHost = "true";
+        localStorage.setItem("BOULETTE_IsHost", isHost);
       })
       .catch(() => {
         success = false;

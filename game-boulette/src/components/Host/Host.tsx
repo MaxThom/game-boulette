@@ -28,7 +28,7 @@ import WaitingRoom from "../Steps/WaitingRoom/WaitingRoom";
 import WriteWords from "../Steps/WriteWords/WriteWords";
 
 
-import { createGameConfig } from '../../services/firebaseStore';
+import {  } from '../../services/firebaseStore';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
